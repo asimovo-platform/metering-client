@@ -3,6 +3,7 @@ package metering
 import (
 	"context"
 	"fmt"
+	"os"
 
 	openmeter "github.com/asimovo-platform/metering-client/client"
 	cloudevents "github.com/cloudevents/sdk-go/v2/event"
@@ -16,10 +17,16 @@ type MeteringClient struct {
 }
 
 func NewMeteringClient(context context.Context) (*MeteringClient, error) {
-	logger := log.FromContext(context)
+	server := os.Getenv("METERING_SERVER")
 
-	// TODO: Use environment variable
-	om, err := openmeter.NewAuthClientWithResponses("https://openmeter.cloud", "om_3NpyD5J4WX0lXPN55LMLIfxDKd81RcDj.63th27OqK-MarYeXarelvaz1dDiohPs8s6t4914T1Pc")
+	api_key := os.Getenv("METERING_API_KEY")
+
+	if server == "" || api_key == "" {
+		return nil, fmt.Errorf("metering server or api key not set")
+	}
+
+	logger := log.FromContext(context)
+	om, err := openmeter.NewAuthClientWithResponses(server, api_key)
 	if err != nil {
 		return nil, err
 	}
