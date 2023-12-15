@@ -1,9 +1,8 @@
-module github.com/asiomovo-platform/metering-client
+module github.com/asimovo-platform/metering-client
 
 go 1.21.4
 
 require (
-	github.com/asimovo-platform/metering-client v0.0.0-20231213075553-4936c135efb0
 	github.com/cloudevents/sdk-go/v2 v2.14.0
 	github.com/getkin/kin-openapi v0.122.0
 	github.com/go-chi/chi/v5 v5.0.10

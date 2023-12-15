@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/asimovo-platform/metering-client/client/models"
 	"github.com/cloudevents/sdk-go/v2/event"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/oapi-codegen/runtime"
