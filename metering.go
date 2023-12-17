@@ -19,9 +19,8 @@ type MeteringClient struct {
 func NewMeteringClient(context context.Context) (*MeteringClient, error) {
 	server := os.Getenv("METERING_SERVER")
 	api_key := os.Getenv("METERING_API_KEY")
-	meterId := os.Getenv("METER_ID")
 
-	if server == "" || api_key == "" || meterId == "" {
+	if server == "" || api_key == "" {
 		return nil, fmt.Errorf("metering configurations are not set")
 	}
 
@@ -31,12 +30,12 @@ func NewMeteringClient(context context.Context) (*MeteringClient, error) {
 		return nil, err
 	}
 
-	// check if meter exist to confirm connection
-	res, err := om.GetMeterWithResponse(context, meterId)
+	// test connection
+	res, err := om.ListMeters(context)
 	if err != nil {
 		return nil, fmt.Errorf("cannot connect to openmeter: %s", err.Error())
 	}
-	if res.HTTPResponse.StatusCode != 200 {
+	if res.StatusCode != 200 {
 		return nil, fmt.Errorf("cannot connect to openmeter")
 	}
 

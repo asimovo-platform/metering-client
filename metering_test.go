@@ -15,7 +15,6 @@ func TestMeteringClient_SendEvent(t *testing.T) {
 	t.Run("1. Test metering client using correct config", func(t *testing.T) {
 		os.Setenv("METERING_SERVER", "https://openmeter.cloud")
 		os.Setenv("METERING_API_KEY", "om_3NpyD5J4WX0lXPN55LMLIfxDKd81RcDj.63th27OqK-MarYeXarelvaz1dDiohPs8s6t4914T1Pc ")
-		os.Setenv("METER_ID", "metering_test")
 
 		client, err := NewMeteringClient(context.Background())
 		if err != nil {
@@ -53,7 +52,6 @@ func TestMeteringClient_SendEvent(t *testing.T) {
 	t.Run("2. Test metering client using empty config", func(t *testing.T) {
 		os.Setenv("METERING_SERVER", "")
 		os.Setenv("METERING_API_KEY", "")
-		os.Setenv("METER_ID", "")
 
 		_, err := NewMeteringClient(context.Background())
 		if err == nil {
