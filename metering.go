@@ -18,11 +18,11 @@ type MeteringClient struct {
 
 func NewMeteringClient(context context.Context) (*MeteringClient, error) {
 	server := os.Getenv("METERING_SERVER")
-
 	api_key := os.Getenv("METERING_API_KEY")
+	meterId := os.Getenv("METER_ID")
 
-	if server == "" || api_key == "" {
-		return nil, fmt.Errorf("metering server or api key not set")
+	if server == "" || api_key == "" || meterId == "" {
+		return nil, fmt.Errorf("metering configurations are not set")
 	}
 
 	logger := log.FromContext(context)
@@ -31,7 +31,17 @@ func NewMeteringClient(context context.Context) (*MeteringClient, error) {
 		return nil, err
 	}
 
-	logger.Info("connected to openmeter")
+	// check if meter exist to confirm connection
+	res, err := om.GetMeterWithResponse(context, meterId)
+	if err != nil {
+		return nil, fmt.Errorf("cannot connect to openmeter: %s", err.Error())
+	}
+	if res.HTTPResponse.StatusCode != 200 {
+		return nil, fmt.Errorf("cannot connect to openmeter")
+	}
+
+	// config should be ok
+	logger.Info(fmt.Sprintf("Connected to openmeter: %s", server))
 
 	return &MeteringClient{
 		om:  om,
@@ -46,7 +56,10 @@ func (client *MeteringClient) SendEvent(event cloudevents.Event) error {
 
 	resp, err := client.om.IngestEventWithResponse(client.ctx, event)
 	if err != nil {
-		logger.Error(err, fmt.Sprintf("unable to send event to openmeter: %s", err.Error()))
+		return err
+	}
+	if resp.HTTPResponse.StatusCode != 204 {
+		return fmt.Errorf("cannot connect to openmeter: %s", resp.HTTPResponse.Status)
 	}
 
 	logger.Info(fmt.Sprintf("openmeter resp status: %s\n", resp.HTTPResponse.Status))
