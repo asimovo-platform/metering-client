@@ -36,7 +36,7 @@ func NewMeteringClient(context context.Context) (*MeteringClient, error) {
 		return nil, fmt.Errorf("cannot connect to openmeter: %s", err.Error())
 	}
 	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("cannot connect to openmeter")
+		return nil, fmt.Errorf("connection check failed - status: %d", res.StatusCode)
 	}
 
 	// config should be ok
